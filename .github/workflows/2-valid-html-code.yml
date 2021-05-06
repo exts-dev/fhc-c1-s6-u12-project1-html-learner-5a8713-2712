@@ -1,0 +1,132 @@
+name: Your HTML code is valid
+on: push
+jobs:
+  valid-html-code:
+    runs-on: ubuntu-latest
+    env:
+      errors: 0
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Find <header>, <main>, <footer>, <h1>, <h2>, <h3> in home.html
+
+    - name: Find main tags in home.html
+      id: find-main-home
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<header>.*<main>.*<footer>"
+        include: "home.html"
+
+    - name: Count main tags in home.html
+      if: ${{ steps.find-main-home.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    - name: Find title tags in home.html
+      id: find-title-home
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<h1>.*<h2>.*<h3>"
+        include: "home.html"
+
+    - name: Count title tags in home.html
+      if: ${{ steps.find-title-home.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    # Find <header>, <main>, <footer>, <h1>, <h2>, <h3> in albums.html
+
+    - name: Find main tags in albums.html
+      id: find-main-albums
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<header>.*<main>.*<footer>"
+        include: "albums.html"
+
+    - name: Count main tags in albums.html
+      if: ${{ steps.find-main-albums.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    - name: Find title tags in albums.html
+      id: find-title-albums
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<h1>.*<h2>.*<h3>"
+        include: "albums.html"
+
+    - name: Count title tags in albums.html
+      if: ${{ steps.find-title-albums.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    # Find <header>, <main>, <footer>, <h1>, <h2>, <h3> in concerts.html
+
+    - name: Find main tags in concerts.html
+      id: find-main-concerts
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<header>.*<main>.*<footer>"
+        include: "concerts.html"
+
+    - name: Count main tags in concerts.html
+      if: ${{ steps.find-main-concerts.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    - name: Find title tags in concerts.html
+      id: find-title-concerts
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<h1>.*<h2>.*<h3>"
+        include: "concerts.html"
+
+    - name: Count title tags in concerts.html
+      if: ${{ steps.find-title-concerts.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    # Find <header>, <main>, <footer>, <h1>, <h2>, <h3> in contact.html
+
+    - name: Find main tags in contact.html
+      id: find-main-contact
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<header>.*<main>.*<footer>"
+        include: "contact.html"
+
+    - name: Count main tags in contact.html
+      if: ${{ steps.find-main-contact.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    - name: Find title tags in contact.html
+      id: find-title-contact
+      uses: nguyenvanuyn96/str-find-action@master
+      with:
+        find: "(?s)<h1>.*<h2>.*<h3>"
+        include: "contact.html"
+
+    - name: Count title tags in contact.html
+      if: ${{ steps.find-title-contact.outputs.fileFoundCount == 0 }}
+      run: echo "errors=$(expr ${{ env.errors }} + 1)" >> $GITHUB_ENV
+
+    # # Check HTML
+
+    - name: Checks HTML5
+      id: check-html
+      uses: Cyb3r-Jak3/html5validator-action@v0.5
+      with:
+        root: .
+        log_level: INFO
+
+    #  Check for broken links
+
+    - name: check
+      uses: untitaker/hyperlink@0.1.15
+      with:
+        args: .
+
+    # Result
+
+    - name: Errors
+      run: echo "${{ env.errors }}"
+
+    - name: Finally
+      if: ${{ env.errors > 4 }}
+      run: exit 1

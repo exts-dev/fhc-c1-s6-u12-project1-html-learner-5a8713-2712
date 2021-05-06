@@ -1,0 +1,46 @@
+name: All project files are in your GitHub repo
+on: push
+jobs:
+  project-files:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check files existence
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "albums.html, concerts.html, contact.html, home.html"
+        allow_failure: true
+
+    - name: Count albums.html lines
+      id: albums
+      run: echo "::set-output name=albums::$(wc -l albums.html | awk '{print $1;}')"
+
+    - name: albums.html valid
+      if: ${{ steps.albums.outputs.albums == '' || steps.albums.outputs.albums < 25 }}
+      run: exit 1
+
+    - name: Count concerts.html lines
+      id: concerts
+      run: echo "::set-output name=concerts::$(wc -l concerts.html | awk '{print $1;}')"
+
+    - name: concerts.html valid
+      if: ${{ steps.concerts.outputs.concerts == '' || steps.concerts.outputs.concerts < 25 }}
+      run: exit 1
+
+    - name: Count contact.html lines
+      id: contact
+      run: echo "::set-output name=contact::$(wc -l contact.html | awk '{print $1;}')"
+
+    - name: contact.html valid
+      if: ${{ steps.contact.outputs.contact == '' || steps.contact.outputs.contact < 25 }}
+      run: exit 1
+
+    - name: Count home.html lines
+      id: home
+      run: echo "::set-output name=home::$(wc -l home.html | awk '{print $1;}')"
+
+    - name: home.html valid
+      if: ${{ steps.home.outputs.home == '' || steps.home.outputs.home < 25 }}
+      run: exit 1
